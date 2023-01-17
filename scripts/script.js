@@ -8,14 +8,24 @@ const crumbs = document.querySelector(".crumbs"); // The page numbers - could re
 
 // TODO: check fixme's
 
+// User template
+const User = function (first_name, last_name, avatar, email) {
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.avatar = avatar;
+    this.email = email;
+    this.get_name = () => {
+        return `${this.first_name} ${this.last_name}`
+    }
+}
 
 // generate profiles
-const create_html_elem = (data) => {
+const create_html_elem = (user) => {
     return `
     <div class="profile">
-            <p>${data.first_name} ${data.last_name}</p>
-            <p>${data.email}</p>
-            <img src="${data.avatar}" alt="profile-image">
+            <p>${user.get_name()}</p>
+            <p>${user.email}</p>
+            <img src="${user.avatar}" alt="profile-image">
     </div>
     `
 }
@@ -32,8 +42,10 @@ function reqListener() {
     // FIXME: crumb dynamic loading issue
     const pages = JSON.parse(this.responseText).total_pages;
     const req_data = JSON.parse(this.responseText).data;
-    req_data.forEach((item, index) => {
-        content.insertAdjacentHTML("beforeend", create_html_elem(item))
+    req_data.forEach((item) => {
+        const { first_name, last_name, avatar, email } = item;
+        const user = new User(first_name, last_name, avatar, email)
+        content.insertAdjacentHTML("beforeend", create_html_elem(user))
     });
 
 
