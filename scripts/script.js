@@ -110,7 +110,6 @@ a_tags.forEach(crumb => {
 
         for (let i = 0; i < a_tags.length; i++) {
             if (i + 1 == page) {
-                console.log(page, i + 1, i);
                 a_tags[i].classList.add("selected");
             } else {
                 a_tags[i].classList.remove("selected");
