@@ -38,13 +38,13 @@ const change_error_message = (error_type) => {
 
     switch (error_type) {
         case 0:
-            error_message.textContent = "Oh we can't detect any internet connection"
+            error_message.innerHTML = "Oh we can't detect any internet connection"
             break;
         case 1:
-            error_message.textContent = "Something has went wrong on our side"
+            error_message.innerHTML = "Something has went wrong on our side"
             break;
         default:
-            error_message.textContent = "This could be due to your <b>internet connection</b> or <b>something went wrong on our side"
+            error_message.innerHTML = "This could be due to your <b>internet connection</b> or <b>something went wrong on our side"
             break;
     }
 }
@@ -82,8 +82,9 @@ const request_data = (page) => {
     req.send();
 }
 
-// FIXME: why no work? 
+// showing the error modal after any error in the request handler
 req.addEventListener("error", () => {
+    change_error_message(1);
     modal.classList.remove("hidden");
 })
 
@@ -95,6 +96,7 @@ window.onload = () => {
 // to check if the network connection was lost after loading the page
 window.addEventListener("DOMContentLoaded", () => {
     if (!navigator.onLine) {
+        change_error_message(0);
         modal.style.visibility = "Visible";
         crumbs.classList.add("hidden");
     } else {
@@ -107,7 +109,7 @@ window.addEventListener("DOMContentLoaded", () => {
 // removing the error modal after the data has been loaded
 req.addEventListener("loadend", () => {
     if (JSON.parse(req.responseText).data.length === 0) {
-        // Change error message -> 404
+        change_error_message(1);
         modal.classList.remove("hidden");
         crumbs.classList.add("hidden");
     } else {
