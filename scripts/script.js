@@ -5,6 +5,7 @@ const a_tags = document.querySelectorAll("a")
 const modal = document.querySelector(".modal");
 const req = new XMLHttpRequest();
 const crumbs = document.querySelector(".crumbs"); // The page numbers - could refactor it to be just crumbs and not a_tags and crumbs - but why
+const error_message = document.querySelector("#error-message");
 
 // TODO: check fixme's
 
@@ -28,6 +29,24 @@ const create_html_elem = (user) => {
             <img src="${user.avatar}" alt="profile-image">
     </div>
     `
+}
+
+const change_error_message = (error_type) => {
+    // 0 -> no internet
+    // 1 -> no data
+    // default -> something went wrong
+
+    switch (error_type) {
+        case 0:
+            error_message.textContent = "Oh we can't detect any internet connection"
+            break;
+        case 1:
+            error_message.textContent = "Something has went wrong on our side"
+            break;
+        default:
+            error_message.textContent = "This could be due to your <b>internet connection</b> or <b>something went wrong on our side"
+            break;
+    }
 }
 
 // FIXME: to dynamically generate crumbs
@@ -65,7 +84,7 @@ const request_data = (page) => {
 
 // FIXME: why no work? 
 req.addEventListener("error", () => {
-    console.log("hre");
+    modal.classList.remove("hidden");
 })
 
 // hiding error modal before dom loaded
@@ -87,8 +106,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // removing the error modal after the data has been loaded
 req.addEventListener("loadend", () => {
-    modal.classList.add("hidden");
+    if (JSON.parse(req.responseText).data.length === 0) {
+        // Change error message -> 404
+        modal.classList.remove("hidden");
+        crumbs.classList.add("hidden");
+    } else {
+        modal.classList.add("hidden");
+        crumbs.classList.remove("hidden");
+    }
 })
+
+
 
 // Event listeners
 
@@ -99,6 +127,7 @@ document.querySelector("#reload").addEventListener("click", () => {
 // load content change based on page
 
 a_tags.forEach(crumb => {
+
     crumb.addEventListener("click", (e) => {
         e.preventDefault();
 
